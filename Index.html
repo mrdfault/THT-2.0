@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THT Event - Elo Rating System</title>
+    <!-- Tailwind CSS for modern, responsive styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter for a clean, readable font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="container">
+        <!-- Tab Navigation for Matchmaking, Dashboard, and History -->
+        <div id="tabs" class="flex justify-center mb-6">
+            <button id="matchmakingTabBtn" class="tab-btn active-tab">Matchmaking</button>
+            <button id="dashboardTabBtn" class="tab-btn tab-btn-inactive ml-2">Dashboard</button>
+            <button id="historyTabBtn" class="tab-btn tab-btn-inactive ml-2">History</button>
+        </div>
+
+        <!-- Page 1: Number of Players Input -->
+        <div id="numPlayersPage" class="page active text-center">
+            <h2 class="text-3xl font-bold mb-3 text-white">THT Event! 2.0</h2>
+            <p class="text-white text-md mb-8">Made by the cool people of #1440</p>
+            <p class="text-gray-300 mb-8">Let's get started. Please enter the total number of participants.</p>
+            <div class="mb-6 max-w-sm mx-auto">
+                <label for="numPlayers" class="block text-gray-200 text-lg font-medium mb-2 text-left">Number of Participants (even number):</label>
+                <input type="number" id="numPlayers" min="2" step="2" class="input-field" placeholder="e.g., 4, 6, 8">
+                <p id="numPlayersError" class="text-red-400 text-sm mt-2 hidden text-left">Please enter an even number of participants (minimum 2).</p>
+            </div>
+            <button id="nextToPlayerDetails" class="btn-primary">Next</button>
+        </div>
+
+        <!-- Page 2: Player Details Input -->
+        <div id="playerDetailsPage" class="page">
+            <h2 class="text-3xl font-bold mb-6 text-white">Enter Player Details</h2>
+            <div id="bulkPasteContainer" class="mb-8">
+                <label class="block text-lg font-medium text-gray-200 mb-2">Paste Player Data (Name Alliance FC Level Troops Level, space-separated):</label>
+                <textarea id="bulkPasteTextarea" rows="4" class="input-field mb-2" placeholder="Paste here..."></textarea>
+                <button id="bulkPastePreviewBtn" class="btn-secondary mb-2">Preview</button>
+                <div id="bulkPastePreview" class="mb-2"></div>
+                <button id="bulkPasteApproveBtn" class="btn-primary mb-2 hidden">Approve & Fill Inputs</button>
+            </div>
+            <div id="playerInputs" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <!-- Player input fields will be dynamically added here by JavaScript -->
+            </div>
+            <button id="nextToMatchmaking" class="btn-primary w-full opacity-50 cursor-not-allowed" disabled>Start Matchmaking</button>
+        </div>
+
+        <!-- Page 3: Matchmaking -->
+        <div id="matchmakingPage" class="page">
+            <h2 class="text-3xl font-bold mb-6 text-white">Current Round: <span id="currentRoundDisplay">1</span></h2>
+            <div id="matchesContainer" class="mb-8 overflow-x-auto"></div>
+            <div class="flex flex-col sm:flex-row justify-between items-center mt-4">
+                <button id="copyMatchesBtn" class="btn-secondary w-full sm:w-auto mb-2 sm:mb-0">Copy Matches</button>
+                <span id="copyMatchesMessage" class="copy-message hidden">Copied!</span>
+                <button id="allMatchedPlayedBtn" class="btn-primary w-full sm:w-auto opacity-50 cursor-not-allowed" disabled>All Matches Played</button>
+            </div>
+        </div>
+
+        <!-- Page 4: Dashboard -->
+        <div id="dashboardPage" class="page">
+            <h2 class="text-3xl font-bold mb-6 text-white">Player Rankings</h2>
+            <div id="rankingsContainer" class="overflow-x-auto"></div>
+            <div class="flex flex-col sm:flex-row justify-between items-center mt-4">
+                <button id="copyRankingsBtn" class="btn-secondary w-full sm:w-auto mb-2 sm:mb-0">Copy Rankings</button>
+                <span id="copyRankingsMessage" class="copy-message hidden">Copied!</span>
+            </div>
+        </div>
+
+        <!-- Page 5: History -->
+        <div id="historyPage" class="page">
+            <h2 class="text-3xl font-bold mb-6 text-white">Current Game History</h2>
+            <p class="text-gray-300 mb-4">Select a round to view its details:</p>
+            <div id="historyRoundList" class="flex flex-wrap gap-2 mb-6"></div>
+            <div id="historyDetailsContainer" class="bg-dark-royal-matte-black p-4 rounded-lg shadow-inner border border-gray-700">
+                <p id="historyDefaultMessage" class="text-gray-400 text-center">Select a round from above to see its matches and rankings.</p>
+                <div id="historyMatchesView" class="mb-8 hidden">
+                    <h3 class="text-xl font-semibold mb-4 text-white">Matches for Round <span id="historyRoundMatchesDisplay"></span></h3>
+                    <div id="historyMatchesTable" class="overflow-x-auto"></div>
+                </div>
+                <div id="historyRankingsView" class="hidden">
+                    <h3 class="text-xl font-semibold mb-4 text-white">Rankings after Round <span id="historyRoundRankingsDisplay"></span></h3>
+                    <div id="historyRankingsTable" class="overflow-x-auto"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Custom Modal for Alerts -->
+        <div id="customModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div class="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full text-center">
+                <p id="modalMessage" class="text-gray-800 text-lg mb-6"></p>
+                <button id="modalCloseBtn" class="btn-primary w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript logic -->
+    <script type="module" src="main.js"></script>
+</body>
+</html>
